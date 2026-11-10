@@ -1,0 +1,11 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata: { name: webhook-relay }
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: webhook-relay }
+  minReplicas: 2
+  # Consumers beyond the topic's partition count sit idle; keep max <= partitions.
+  maxReplicas: 12
+  metrics:
+    - type: Resource
+      resource: { name: cpu, target: { type: Utilization, averageUtilization: 70 } }

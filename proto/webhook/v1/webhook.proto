@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package webhook.v1;
+
+option go_package = "github.com/PreetamChamkura/webhook-relay/gen/webhook/v1;webhookv1";
+
+// EventService is the gRPC equivalent of POST /v1/events.
+service EventService {
+  rpc Publish(PublishRequest) returns (PublishResponse);
+}
+
+message PublishRequest {
+  string event_type = 1;
+  // JSON document delivered as the envelope's "data" field.
+  bytes payload_json = 2;
+  // Same semantics as the Idempotency-Key HTTP header.
+  string idempotency_key = 3;
+}
+
+message PublishResponse {
+  string event_id = 1;
+  bool duplicate = 2;
+}

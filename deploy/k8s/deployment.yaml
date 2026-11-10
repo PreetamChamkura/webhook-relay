@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: { name: webhook-relay, labels: { app: webhook-relay } }
+spec:
+  replicas: 2
+  selector: { matchLabels: { app: webhook-relay } }
+  template:
+    metadata:
+      labels: { app: webhook-relay }
+      annotations: { prometheus.io/scrape: "true", prometheus.io/port: "8080", prometheus.io/path: /metrics }
+    spec:
+      # > SHUTDOWN_TIMEOUT so the drain finishes before SIGKILL.
+      terminationGracePeriodSeconds: 30
+      containers:
+        - name: webhook-relay
+          image: ghcr.io/preetamchamkura/webhook-relay:latest
+          ports:
+            - { name: http, containerPort: 8080 }
+            - { name: grpc, containerPort: 9090 }
+          envFrom:
+            - configMapRef: { name: webhook-relay }
+            - secretRef: { name: webhook-relay }
+          readinessProbe: { httpGet: { path: /readyz, port: http }, periodSeconds: 5 }
+          livenessProbe: { httpGet: { path: /healthz, port: http }, periodSeconds: 10 }
+          resources:
+            requests: { cpu: 250m, memory: 128Mi }
+            limits: { memory: 512Mi }
+          securityContext: { readOnlyRootFilesystem: true, allowPrivilegeEscalation: false, runAsNonRoot: true }

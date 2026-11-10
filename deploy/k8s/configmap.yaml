@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: { name: webhook-relay }
+data:
+  KAFKA_BROKERS: redpanda.default.svc:9092
+  WORKERS: "64"
+  MAX_ATTEMPTS: "5"
+  BACKOFF_BASE: 500ms
+  BACKOFF_MAX: 30s
+  SHUTDOWN_TIMEOUT: 25s
