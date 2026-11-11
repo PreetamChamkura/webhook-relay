@@ -1,4 +1,7 @@
+version: "2"
 linters:
-  enable: [errcheck, govet, staticcheck, unused, ineffassign, gosec, bodyclose, misspell, gofmt]
-issues:
-  exclude-dirs: [gen]
+  enable: [gosec, bodyclose, misspell]
+  exclusions:
+    paths: [gen]
+formatters:
+  enable: [gofmt]

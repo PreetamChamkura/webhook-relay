@@ -43,7 +43,7 @@ func main() {
 		_, _ = w.Write([]byte(`{"down":` + strconv.FormatBool(v) + "}"))
 	})
 	mux.HandleFunc("POST /hook", func(w http.ResponseWriter, r *http.Request) {
-		if down.Load() || rand.Float64() < failRate {
+		if down.Load() || rand.Float64() < failRate { // #nosec G404 -- test fault injection, not security
 			received.WithLabelValues("rejected").Inc()
 			w.WriteHeader(http.StatusServiceUnavailable)
 			return
@@ -74,7 +74,8 @@ func main() {
 		addr = ":8090"
 	}
 	log.Info("receiver listening", "addr", addr)
-	if err := http.ListenAndServe(addr, mux); err != nil {
+	srv := &http.Server{Addr: addr, Handler: mux, ReadHeaderTimeout: 5 * time.Second}
+	if err := srv.ListenAndServe(); err != nil {
 		log.Error("listen", "err", err)
 		os.Exit(1)
 	}

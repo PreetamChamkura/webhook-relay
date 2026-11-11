@@ -129,7 +129,7 @@ AWS: `cd terraform && terraform apply -var image=…` provisions a VPC, ECS Farg
   - publish → deliver, with a duplicate `Idempotency-Key` delivered exactly once and a valid signature
   - subscriber down → 5 dead letters → replay → all delivered and the DLQ emptied
 - **Chaos:** publish 200 events to a slow subscriber, hard-kill the consumer mid-batch (in-flight requests cancelled, offsets uncommitted), start a new consumer. The test asserts **all 200 delivered (no loss)** and reports the duplicate count, which is bounded by the in-flight slots.
-- **CI** (GitHub Actions): golangci-lint, `go test -race`, integration tests, govulncheck, `buf lint`, `terraform validate`, docker build.
+- **CI:** `make ci` ([`scripts/ci.sh`](scripts/ci.sh)) runs gofmt, `go vet`, golangci-lint, `go test -race` and govulncheck. When Docker and terraform are available, it also runs the integration/chaos tests, the docker build and `terraform validate`. The same checks are defined for GitHub Actions in [`.github/workflows/ci.yml`](.github/workflows/ci.yml), but Actions is currently disabled on this repo, so run `make ci` before pushing.
 
 ## Results
 

@@ -60,7 +60,7 @@ func run(log *slog.Logger) error {
 		return err
 	}
 	rdb := redis.NewClient(ropts)
-	defer rdb.Close()
+	defer func() { _ = rdb.Close() }()
 	producer, err := queue.NewProducer(cfg.KafkaBrokers, cfg.Topic, cfg.DLQTopic)
 	if err != nil {
 		return err

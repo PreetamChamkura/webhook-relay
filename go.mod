@@ -2,6 +2,8 @@ module github.com/PreetamChamkura/webhook-relay
 
 go 1.26.0
 
+toolchain go1.27.4
+
 require (
 	github.com/go-chi/chi/v5 v5.5.0
 	github.com/golang-migrate/migrate/v4 v4.20.1

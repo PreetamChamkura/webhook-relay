@@ -196,7 +196,7 @@ func (w *Worker) post(ctx context.Context, sub store.Subscription, eventID strin
 	if err != nil {
 		return 0, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 	_, _ = io.Copy(io.Discard, io.LimitReader(resp.Body, 64<<10))
 	if resp.StatusCode < 200 || resp.StatusCode > 299 {
 		return resp.StatusCode, fmt.Errorf("subscriber returned %d", resp.StatusCode)
